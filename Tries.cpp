@@ -1,4 +1,5 @@
 // Class Trie
+#include <iostream>
 #include <vector>
 #include <string>
 using namespace std;
@@ -46,6 +47,13 @@ struct MyTrie {
         }
         return u;
     }
+
+    bool remove(const string& s) {
+        int u = find(s);
+        if (u == -1 || !is_word[u]) return false; // Word doesn't exist in trie
+        is_word[u] = false;
+        return true;
+    }
 };
 
 class Trie {
@@ -67,8 +75,22 @@ public:
         int node = tr.find(prefix);
         return node != -1;
     }
-};
 
+    bool remove(const string& word) {
+        return tr.remove(word);
+    }
+
+    vector<string> stringMatching(const string& pattern) const {
+        vector<string> matched_words;
+        for (size_t i = 0; i < pattern.length(); ++i) {
+            string prefix = pattern.substr(0, i + 1);
+            if (startsWith(prefix)) {
+                matched_words.push_back(prefix);
+            }
+        }
+        return matched_words;
+    }
+};
 
 int main() {
     Trie trie;
@@ -87,5 +109,27 @@ int main() {
     cout << (trie.startsWith("ban") ? "'ban' is a prefix" : "'ban' is not a prefix") << endl;
     cout << (trie.startsWith("bat") ? "'bat' is a prefix" : "'bat' is not a prefix") << endl;
     
-    return 0;
+    cout << "Words matching 'app': ";
+    vector<string> matched_words = trie.stringMatching("app");
+    for (const string& word : matched_words) {
+        cout << word << " ";
+    }
+    cout << endl;
+
+    cout << "Words matching 'ban': ";
+    matched_words = trie.stringMatching("ban");
+    for (const string& word : matched_words) {
+        cout << word << " ";
+    }
+    cout << endl;
+
+    cout << "Words matching 'b': ";
+    matched_words = trie.stringMatching("b");
+    for (const string& word : matched_words) {
+        cout << word << " ";
+    }
+    cout << endl;
+
+    trie.remove("apple");
+    cout << (trie.search("apple") ? "Found 'apple'" : "Did not find 'apple'") << endl;
 }
